@@ -1,4 +1,3 @@
-
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({
@@ -6,13 +5,22 @@ export default async function handler(req, res) {
     });
   }
 
-  const { course, lesson, language = "English" } = req.query;
+  const { course, lesson } = req.query;
+
+  let { language = "English" } = req.query;
 
   if (!course || !lesson) {
     return res.status(400).json({
       error: "Course and lesson are required"
     });
   }
+
+  if (Array.isArray(language)) {
+    language = language[0];
+  }
+
+  const selectedLanguage =
+    String(language).trim() || "English";
 
   const apiKey = process.env.YOUTUBE_API_KEY;
 
@@ -22,18 +30,8 @@ export default async function handler(req, res) {
     });
   }
 
-  const languageNames = {
-    English: "English",
-    Telugu: "Telugu",
-    Tamil: "Tamil",
-    Hindi: "Hindi"
-  };
-
-  const selectedLanguage =
-    languageNames[language] || "English";
-
   const searchQuery =
-    `${course} ${lesson} tutorial ${selectedLanguage}`;
+    `${course} ${lesson} tutorial in ${selectedLanguage}`;
 
   try {
     const params = new URLSearchParams({
