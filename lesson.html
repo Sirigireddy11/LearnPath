@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnPath - Lesson</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #080b16;
+      color: #e8ecf7;
+      visibility: hidden;
+      margin: 0;
+    }
+
+    .lesson-container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .lesson-header,
+    .lesson-card,
+    .quiz-card,
+    .notes-card {
+      background: #12182a;
+      color: #e8ecf7;
+      padding: 22px;
+      margin-bottom: 22px;
+      border: 1px solid #252e48;
+      border-radius: 14px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.25);
+    }
+
+    .lesson-header h1 {
+      margin-top: 0;
+      color: #ffffff;
+    }
+
+    .lesson-navigation {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .lesson-navigation button,
+    .action-button {
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #635bff, #3478f6);
+      color: white;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    .lesson-navigation button:hover,
+    .action-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .lesson-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .lesson-tab {
+      padding: 10px 14px;
+      border: 1px solid #303a59;
+      border-radius: 8px;
+      background: #151d32;
+      color: #dce4ff;
+      cursor: pointer;
+    }
+
+    .lesson-tab.active {
+      background: #635bff;
+      color: white;
+      border-color: #635bff;
+    }
+
+    .question {
+      background: #171f34;
+      border: 1px solid #303a59;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 15px 0;
+    }
+
+    .question p {
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .option {
+      display: block;
+      margin: 12px 0;
+      color: #dce4f5;
+      cursor: pointer;
+    }
+
+    .option input {
+      margin-right: 8px;
+      accent-color: #786dff;
+    }
+
+    #quizResult {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 8px;
+      background: #1b2940;
+      color: #e8ecf7;
+      border: 1px solid #354767;
+    }
+
+    .correct-answer {
+      color: #55d99a;
+      font-weight: bold;
+    }
+
+    .wrong-answer {
+      color: #ff8585;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 12px;
+      box-sizing: border-box;
+      border: 1px solid #303a59;
+      border-radius: 8px;
+      background: #0d1425;
+      color: #ffffff;
+      font: inherit;
+      resize: vertical;
+    }
+
+    textarea::placeholder {
+      color: #8792ad;
+    }
+
+    .lesson-progress-track {
+      height: 10px;
+      background: #29334d;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 12px 0;
+    }
+
+    .lesson-progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #635bff, #27b8e8);
+      transition: width 0.3s;
+    }
+
+    .muted {
+      color: #9ca8c3;
+    }
+
+    .lesson-content {
+      line-height: 1.8;
+      color: #dce4f5;
+    }
+
+    .lesson-content h3 {
+      margin-top: 22px;
+      color: #a99fff;
+    }
+
+    .lesson-content p,
+    .lesson-content li {
+      color: #dce4f5;
+    }
+
+    .lesson-content strong {
+      color: #ffffff;
+    }
+
+    .lesson-content pre {
+      padding: 16px;
+      overflow-x: auto;
+      border-radius: 9px;
+      background: #080e1c;
+      color: #8ee6c0;
+      border: 1px solid #29334d;
+    }
+
+    .lesson-content code {
+      font-family: Consolas, monospace;
+    }
+
+    .status-message {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #8ee6c0;
+    }
+
+    a {
+      color: #8ea8ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #b8c5ff;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .lesson-container {
+        padding: 12px;
+      }
+
+      .lesson-header,
+      .lesson-card,
+      .quiz-card,
+      .notes-card {
+        padding: 16px;
+      }
+    }
+
+    /* YouTube lesson section */
+
+    .lesson-video-section {
+      margin-top: 25px;
+      padding: 18px;
+      background: #0d1425;
+      border: 1px solid #303a59;
+      border-radius: 12px;
+    }
+
+    .lesson-video-section h2 {
+      color: #ffffff;
+    }
+
+    #videoPlayer {
+      width: 100%;
+      margin: 18px 0;
+    }
+
+    #videoPlayer iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      border-radius: 10px;
+    }
+
+    .video-result {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      text-align: left;
+      background: #171f34;
+      color: #e8ecf7;
+      border: 1px solid #303a59;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+
+    .video-result:hover {
+      border-color: #786dff;
+      background: #202a45;
+    }
+
+    .video-result strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .video-result small {
+      color: #9ca8c3;
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="lesson-container">
+
+    <div class="lesson-header">
+
+      <p>
+        <a href="index.html#courses">← Back to Courses</a>
+      </p>
+
+      <h1 id="courseTitle">Loading course...</h1>
+
+      <p id="languageText" class="muted"></p>
+
+      <h3>Overall Lesson Progress</h3>
+
+      <div class="lesson-progress-track">
+        <div id="progressFill" class="lesson-progress-fill"></div>
+      </div>
+
+      <p id="progressText">0 of 3 lessons completed</p>
+
+      <div class="lesson-navigation">
+
+        <button id="previousButton" type="button">
+          Previous Lesson
+        </button>
+
+        <button id="nextButton" type="button">
+          Next Lesson
+        </button>
+
+      </div>
+
+      <p id="navigationMessage" class="muted"></p>
+
+    </div>
+
+    <div class="lesson-tabs" id="lessonTabs"></div>
+
+    <section class="lesson-card">
+
+      <h2 id="lessonTitle">Lesson</h2>
+
+      <div id="lessonContent" class="lesson-content">
+        Loading lesson...
+      </div>
+
+      <div id="lessonVideoSection" class="lesson-video-section">
+
+        <h2>Learn with Video Lessons</h2>
+
+        <p class="muted">
+          Watch tutorials related to this lesson without leaving LearnPath.
+        </p>
+
+        <div id="videoPlayer">
+          <p class="muted">Select a video to start learning.</p>
+        </div>
+
+        <div id="videoResults">
+          <p class="muted">Loading video tutorials...</p>
+        </div>
+
+        <p id="videoStatus" class="muted"></p>
+
+      </div>
+
+      <div class="lesson-navigation">
+
+        <button id="completeButton" class="action-button" type="button">
+          Mark Lesson as Completed
+        </button>
+
+      </div>
+
+      <p id="lessonStatus" class="status-message"></p>
+
+    </section>
+
+    <section class="quiz-card">
+
+      <h2>Lesson Quiz</h2>
+
+      <p>Answer all the questions and submit your answers to see your score.</p>
+
+      <p id="previousScore" class="muted">
+        No quiz score yet.
+      </p>
+
+      <form id="quizForm">
+
+        <div id="quizQuestions"></div>
+
+        <button id="submitQuizButton" class="action-button" type="submit">
+          Submit Quiz
+        </button>
+
+      </form>
+
+      <div id="quizResult" hidden aria-live="polite"></div>
+
+    </section>
+
+    <section class="notes-card">
+
+      <h2>My Lesson Notes</h2>
+
+      <p>
+        Write your important points here. Your notes are saved in this browser.
+      </p>
+
+      <textarea
+        id="lessonNotes"
+        placeholder="Write your notes here..."
+      ></textarea>
+
+      <div class="lesson-navigation">
+
+        <button id="saveNotesButton" class="action-button" type="button">
+          Save Notes
+        </button>
+
+      </div>
+
+      <p id="notesStatus" class="status-message"></p>
+
+    </section>
+
+  </main>
+
+  <script>
+    "use strict";
+
+    // ==========================================
+    // 1. SELECTED COURSE AND LANGUAGE
+    // ==========================================
+
+    const params = new URLSearchParams(window.location.search);
+
+    const courseName =
+      params.get("course") || "General Programming";
+
+    const language =
+      params.get("language") || "English";
+
+    const PROGRESS_KEY = "learnpath-progress-v1";
+    const NOTES_KEY = "learnpath-notes-v1";
+
+    // ==========================================
+    // 2. AI LESSONS
+    // ==========================================
+
+    const aiLessons = [
+
+      {
+        title: "Introduction to Artificial Intelligence",
+
+        content: `
+
+          <h3>1. What is Artificial Intelligence?</h3>
+
+          <p>
+            Artificial Intelligence (AI) is a technology that allows
+            computers to perform tasks that normally require human
+            intelligence.
+          </p>
+
+          <p>
+            These tasks include understanding information, recognising
+            images, understanding language, finding patterns and making
+            predictions.
+          </p>
+
+          <h3>2. Simple Real-Time Examples</h3>
+
+          <ul>
+            <li><strong>Voice Assistants:</strong> Understand our voice and answer questions.</li>
+            <li><strong>YouTube:</strong> Suggests videos based on our interests.</li>
+            <li><strong>Google Maps:</strong> Helps find routes and estimate travel time.</li>
+            <li><strong>Email:</strong> Identifies unwanted spam messages.</li>
+            <li><strong>Shopping Apps:</strong> Suggest products based on our activity.</li>
+          </ul>
+
+          <h3>3. How Does AI Work?</h3>
+
+          <p>
+            An AI system generally receives information, processes it,
+            identifies patterns and produces an output.
+          </p>
+
+          <ol>
+            <li>Collect the required data.</li>
+            <li>Prepare and organise the data.</li>
+            <li>Use an AI model to process the data.</li>
+            <li>Evaluate the model's output.</li>
+            <li>Use the result to support a task or decision.</li>
+          </ol>
+
+          <h3>4. Difference Between AI and Traditional Programming</h3>
+
+          <p>
+            In traditional programming, developers write specific rules
+            for a computer to follow.
+          </p>
+
+          <p>
+            In machine learning, a model learns patterns from examples
+            and uses those patterns to make predictions.
+          </p>
+
+          <h3>5. Why is AI Important?</h3>
+
+          <ul>
+            <li>Helps process large amounts of information.</li>
+            <li>Can automate repetitive tasks.</li>
+            <li>Helps identify patterns in data.</li>
+            <li>Supports faster analysis.</li>
+            <li>Can improve many digital services.</li>
+          </ul>
+
+          <h3>Quick Revision</h3>
+
+          <p>
+            AI helps computers perform tasks such as recognising patterns,
+            understanding language and making predictions.
+          </p>
+
+        `
+      },
+
+      {
+        title: "Important Concepts in Artificial Intelligence",
+
+        content: `
+
+          <h3>1. Machine Learning (ML)</h3>
+
+          <p>
+            Machine Learning is a part of AI. It allows computers to learn
+            patterns from data instead of depending only on manually written
+            rules.
+          </p>
+
+          <p><strong>Example:</strong> An email system learning to identify spam messages.</p>
+
+          <h3>2. Deep Learning</h3>
+
+          <p>
+            Deep Learning is a part of machine learning. It uses neural
+            networks with multiple layers to learn complex patterns.
+          </p>
+
+          <p>
+            It is commonly used in image recognition, speech recognition
+            and other AI applications.
+          </p>
+
+          <h3>3. Natural Language Processing (NLP)</h3>
+
+          <p>
+            NLP helps computers understand and process human language.
+          </p>
+
+          <p><strong>Examples:</strong></p>
+
+          <ul>
+            <li>Language translation.</li>
+            <li>Chatbots.</li>
+            <li>Text summarisation.</li>
+            <li>Voice assistants.</li>
+          </ul>
+
+          <h3>4. Computer Vision</h3>
+
+          <p>
+            Computer Vision helps computers understand information
+            from images and videos.
+          </p>
+
+          <p>
+            Example: A system identifying objects in an image.
+          </p>
+
+          <h3>5. Generative AI</h3>
+
+          <p>
+            Generative AI can create new content such as text, images,
+            audio and computer code based on a user's instructions.
+          </p>
+
+          <p><strong>Example:</strong> An AI assistant generating a summary of a topic.</p>
+
+          <h3>6. Important Machine Learning Terms</h3>
+
+          <ul>
+            <li><strong>Dataset:</strong> A collection of information used for learning.</li>
+            <li><strong>Feature:</strong> An input value used by a model.</li>
+            <li><strong>Label:</strong> The expected answer associated with an example.</li>
+            <li><strong>Model:</strong> A system that learns patterns from data.</li>
+            <li><strong>Training:</strong> The process of teaching a model using data.</li>
+            <li><strong>Prediction:</strong> The output produced by a trained model.</li>
+          </ul>
+
+          <h3>7. Types of Machine Learning</h3>
+
+          <p><strong>Supervised Learning:</strong></p>
+
+          <p>
+            The model learns from examples that contain input data
+            and correct answers.
+          </p>
+
+          <p><strong>Unsupervised Learning:</strong></p>
+
+          <p>
+            The model looks for patterns or groups in data without
+            predefined answer labels.
+          </p>
+
+          <p><strong>Reinforcement Learning:</strong></p>
+
+          <p>
+            The system learns by receiving feedback based on its actions.
+          </p>
+
+          <h3>Quick Revision</h3>
+
+          <p>
+            AI is the broader field. Machine Learning, Deep Learning,
+            NLP and Computer Vision are important related areas.
+          </p>
+
+        `
+      },
+
+      {
+        title: "Practical AI Applications and Python Example",
+
+        content: `
+
+          <h3>1. Where is AI Used?</h3>
+
+          <p><strong>Healthcare:</strong></p>
+
+          <p>
+            AI can help analyse medical information and support
+            healthcare professionals.
+          </p>
+
+          <p><strong>Education:</strong></p>
+
+          <p>
+            Learning platforms can recommend lessons based on a
+            student's learning progress.
+          </p>
+
+          <p><strong>Banking:</strong></p>
+
+          <p>
+            AI systems can help identify unusual transaction patterns.
+          </p>
+
+          <p><strong>E-commerce:</strong></p>
+
+          <p>
+            Shopping websites can recommend products based on
+            customer interests.
+          </p>
+
+          <p><strong>Transportation:</strong></p>
+
+          <p>
+            AI can help analyse traffic information and estimate
+            travel times.
+          </p>
+
+          <h3>2. Simple Python Practice Example</h3>
+
+          <p>
+            Let's create a basic spam-message checker using Python.
+          </p>
+
+          <p>
+            This is a simple rule-based example to understand
+            text checking. It is not a trained AI or machine-learning model.
+          </p>
+
+          <pre><code>message = input("Enter a message: ")
+
+if "win" in message.lower() or "prize" in message.lower():
+    print("This message may be spam")
+else:
+    print("No common spam words found")</code></pre>
+
+          <h3>3. Understand the Program</h3>
+
+          <ul>
+            <li><strong>input():</strong> Accepts a message from the user.</li>
+            <li><strong>lower():</strong> Converts text to lowercase.</li>
+            <li><strong>if:</strong> Checks whether a condition is true.</li>
+            <li><strong>in:</strong> Checks whether a word exists in the text.</li>
+            <li><strong>print():</strong> Displays the result.</li>
+          </ul>
+
+          <h3>4. Basic AI Project Workflow</h3>
+
+          <ol>
+            <li>Choose a problem to solve.</li>
+            <li>Collect suitable data.</li>
+            <li>Clean and prepare the data.</li>
+            <li>Select a machine-learning approach.</li>
+            <li>Train the model.</li>
+            <li>Test the model using separate data.</li>
+            <li>Evaluate the results.</li>
+          </ol>
+
+          <h3>5. Important Things to Remember</h3>
+
+          <ul>
+            <li>AI systems depend on the quality of their data.</li>
+            <li>AI predictions can sometimes be incorrect.</li>
+            <li>Important decisions need human review.</li>
+            <li>Personal information should be handled carefully.</li>
+          </ul>
+
+          <h3>Final Revision</h3>
+
+          <p>
+            AI is used in many real-world applications. Learning Python,
+            mathematics, data handling and machine learning provides
+            a useful foundation for studying AI.
+          </p>
+
+        `
+      }
+
+    ];
+
+    // ==========================================
+    // 3. GENERAL LESSONS FOR OTHER COURSES
+    // ==========================================
+
+    const generalLessons = [
+
+      {
+        title: "Introduction and Basics",
+
+        content: `
+
+          <h3>What will you learn?</h3>
+
+          <p>
+            This lesson introduces the basic concepts of
+            <strong>${escapeHTML(courseName)}</strong>.
+          </p>
+
+          <p>
+            First, understand what the technology is, why it is useful,
+            and where it is used in real life.
+          </p>
+
+          <h3>Real-Time Example</h3>
+
+          <p>
+            Think about an application that you use every day.
+            It may use programming, databases, cloud services or
+            artificial intelligence to provide its features.
+          </p>
+
+          <h3>Learning Tip</h3>
+
+          <p>
+            Understand the basic terms before moving to advanced topics.
+            Try explaining the concept in your own words.
+          </p>
+
+        `
+      },
+
+      {
+        title: "Important Concepts",
+
+        content: `
+
+          <h3>Understand the Main Concepts</h3>
+
+          <p>
+            Every technology has important concepts that help us
+            understand how it works.
+          </p>
+
+          <p>
+            Learn each concept step by step and connect it to
+            a practical example.
+          </p>
+
+          <h3>Example</h3>
+
+          <p>
+            In a software application, different components work together.
+            The user interface accepts input, the program processes it,
+            and the application displays the result.
+          </p>
+
+          <h3>Practice</h3>
+
+          <ul>
+            <li>Identify the important terms.</li>
+            <li>Understand what each term means.</li>
+            <li>Think of one real-world example.</li>
+            <li>Try explaining the concept without looking at your notes.</li>
+          </ul>
+
+        `
+      },
+
+      {
+        title: "Practical Applications",
+
+        content: `
+
+          <h3>Apply What You Learned</h3>
+
+          <p>
+            Now connect the basic concepts with a practical application
+            of <strong>${escapeHTML(courseName)}</strong>.
+          </p>
+
+          <h3>Practical Example</h3>
+
+          <p>
+            Imagine building a small student application. It might store
+            student information, process user input, and display results.
+            The exact implementation depends on the technology you are learning.
+          </p>
+
+          <h3>Revision</h3>
+
+          <ul>
+            <li>Review the first lesson.</li>
+            <li>Revise the important concepts.</li>
+            <li>Complete this lesson's quiz.</li>
+            <li>Write down anything you need to study again.</li>
+          </ul>
+
+        `
+      }
+
+    ];
+
+    const isAICourse =
+      /artificial intelligence|\bai\b|machine learning|\bml\b|deep learning|generative ai|prompt engineering|nlp|computer vision|data science|catboost|xgboost|neural network/i
+      .test(courseName);
+
+    const lessons = isAICourse ? aiLessons : generalLessons;
+
+    let currentLesson = 0;
+    let currentQuestions = [];
+    let quizSubmitted = false;
+    // ==========================================
+// 4. QUIZ QUESTION BANKS
+// ==========================================
+
+const quizBanks = {
+
+  python: [
+    {
+      q: "Which keyword is used to define a function in Python?",
+      options: ["function", "def", "create", "method"],
+      answer: 1,
+      explanation: "Python uses the def keyword to define a function."
+    },
+    {
+      q: "Which symbol is used for a single-line comment in Python?",
+      options: ["//", "#", "<!--", "**"],
+      answer: 1,
+      explanation: "The # symbol starts a single-line Python comment."
+    },
+    {
+      q: "Which data type stores True or False?",
+      options: ["String", "Integer", "Boolean", "List"],
+      answer: 2,
+      explanation: "Boolean values represent True or False."
+    },
+    {
+      q: "Which collection stores ordered, changeable items?",
+      options: ["List", "Integer", "Boolean", "Float"],
+      answer: 0,
+      explanation: "A Python list is ordered and can be modified."
+    },
+    {
+      q: "Which loop is commonly used to iterate over a sequence?",
+      options: ["repeat", "foreach only", "for", "loopstart"],
+      answer: 2,
+      explanation: "A for loop can iterate over items in a sequence."
+    },
+    {
+      q: "What does len() return for a list?",
+      options: [
+        "The list's length",
+        "The first item",
+        "The list's data type",
+        "The last item"
+      ],
+      answer: 0,
+      explanation: "len() returns the number of items in a list."
+    }
+  ],
+
+  web: [
+    {
+      q: "What is the main purpose of HTML?",
+      options: [
+        "Structure web content",
+        "Store passwords",
+        "Manage servers only",
+        "Create database tables"
+      ],
+      answer: 0,
+      explanation: "HTML defines the structure of a web page."
+    },
+    {
+      q: "What is CSS mainly used for?",
+      options: [
+        "Database queries",
+        "Styling web pages",
+        "Writing operating systems",
+        "Sending emails"
+      ],
+      answer: 1,
+      explanation: "CSS controls layout, colours, fonts and visual styles."
+    },
+    {
+      q: "Which language adds interactivity to web pages?",
+      options: ["SQL", "HTML only", "JavaScript", "XML only"],
+      answer: 2,
+      explanation: "JavaScript can respond to events and update web pages."
+    },
+    {
+      q: "Which HTML element creates a hyperlink?",
+      options: ["p", "a", "h1", "img"],
+      answer: 1,
+      explanation: "The a element creates a hyperlink."
+    },
+    {
+      q: "Which CSS property changes text colour?",
+      options: ["font-style", "background-image", "color", "spacing"],
+      answer: 2,
+      explanation: "The CSS color property sets text colour."
+    },
+    {
+      q: "Which method selects an element by its ID in JavaScript?",
+      options: [
+        "getElementById()",
+        "selectByClassOnly()",
+        "findHTML()",
+        "getDatabase()"
+      ],
+      answer: 0,
+      explanation: "document.getElementById() selects an element by its ID."
+    }
+  ],
+
+  database: [
+    {
+      q: "What is the main purpose of a database?",
+      options: [
+        "Store and organise data",
+        "Style a web page",
+        "Edit images",
+        "Play audio"
+      ],
+      answer: 0,
+      explanation: "A database stores and organises data."
+    },
+    {
+      q: "Which SQL command retrieves data?",
+      options: ["GET", "SELECT", "OPEN", "FETCHALL"],
+      answer: 1,
+      explanation: "SELECT retrieves data from database tables."
+    },
+    {
+      q: "What is a primary key?",
+      options: [
+        "A duplicate row",
+        "A field that uniquely identifies a row",
+        "A table description",
+        "A database password"
+      ],
+      answer: 1,
+      explanation: "A primary key uniquely identifies each row."
+    },
+    {
+      q: "Which SQL command adds new rows?",
+      options: ["INSERT", "REMOVE", "CREATE USER", "DISPLAY"],
+      answer: 0,
+      explanation: "INSERT INTO adds rows to a table."
+    },
+    {
+      q: "What does WHERE do in SQL?",
+      options: [
+        "Sorts every column",
+        "Filters rows by a condition",
+        "Deletes the database",
+        "Creates a user"
+      ],
+      answer: 1,
+      explanation: "WHERE filters rows according to a condition."
+    },
+    {
+      q: "What is the purpose of a foreign key?",
+      options: [
+        "Connect related tables",
+        "Change font size",
+        "Encrypt every file automatically",
+        "Rename the database"
+      ],
+      answer: 0,
+      explanation: "A foreign key establishes a relationship between tables."
+    }
+  ],
+
+  ai: [
+    {
+      q: "What is Artificial Intelligence?",
+      options: [
+        "Technology that helps computers perform intelligent tasks",
+        "A type of computer keyboard",
+        "A programming error",
+        "A storage device"
+      ],
+      answer: 0,
+      explanation: "AI helps computers perform tasks such as recognising patterns and understanding language."
+    },
+    {
+      q: "What is the main goal of Machine Learning?",
+      options: [
+        "Learn patterns from data",
+        "Replace every database",
+        "Design only web pages",
+        "Increase screen brightness"
+      ],
+      answer: 0,
+      explanation: "Machine Learning identifies patterns from data."
+    },
+    {
+      q: "What is a dataset?",
+      options: [
+        "A collection of data",
+        "A programming keyword",
+        "A computer cable",
+        "A web browser"
+      ],
+      answer: 0,
+      explanation: "A dataset is a collection of related data."
+    },
+    {
+      q: "What is the purpose of training a model?",
+      options: [
+        "Learn patterns from examples",
+        "Delete all input data",
+        "Format a hard drive",
+        "Create a web link"
+      ],
+      answer: 0,
+      explanation: "Training adjusts a model so it can learn patterns from examples."
+    },
+    {
+      q: "What is a feature in Machine Learning?",
+      options: [
+        "An input variable",
+        "A computer monitor",
+        "A database password",
+        "A file extension only"
+      ],
+      answer: 0,
+      explanation: "A feature is an input variable used by a model."
+    },
+    {
+      q: "Why do we test a Machine Learning model?",
+      options: [
+        "To evaluate its performance on data",
+        "To change the keyboard",
+        "To delete the training process",
+        "To create HTML headings"
+      ],
+      answer: 0,
+      explanation: "Testing helps estimate how well a model performs on unseen data."
+    },
+    {
+      q: "What is classification?",
+      options: [
+        "Predicting a category or class",
+        "Sorting computer cables",
+        "Creating a folder only",
+        "Compressing every image"
+      ],
+      answer: 0,
+      explanation: "Classification predicts a category, such as spam or not spam."
+    },
+    {
+      q: "What is NLP?",
+      options: [
+        "Natural Language Processing",
+        "Network Learning Program",
+        "New Logic Process",
+        "Natural Link Programming"
+      ],
+      answer: 0,
+      explanation: "NLP helps computers understand and process human language."
+    },
+    {
+      q: "What is Computer Vision used for?",
+      options: [
+        "Understanding images and videos",
+        "Creating passwords",
+        "Managing databases only",
+        "Writing HTML"
+      ],
+      answer: 0,
+      explanation: "Computer Vision helps computers understand information from images and videos."
+    }
+  ],
+
+  cloud: [
+    {
+      q: "What is cloud computing?",
+      options: [
+        "Using computing services over a network",
+        "Only storing files on paper",
+        "A type of keyboard",
+        "A programming loop"
+      ],
+      answer: 0,
+      explanation: "Cloud computing provides services such as storage and computing over a network."
+    },
+    {
+      q: "What is Docker commonly used for?",
+      options: [
+        "Running applications in containers",
+        "Creating database relationships only",
+        "Editing presentations",
+        "Designing logos"
+      ],
+      answer: 0,
+      explanation: "Docker is commonly used to build and run containerised applications."
+    },
+    {
+      q: "What is Kubernetes primarily used for?",
+      options: [
+        "Managing containerised applications",
+        "Writing HTML headings",
+        "Creating spreadsheets only",
+        "Editing audio"
+      ],
+      answer: 0,
+      explanation: "Kubernetes orchestrates containerised workloads."
+    },
+    {
+      q: "What does scalability mean?",
+      options: [
+        "Handling changes in workload",
+        "Changing text colour",
+        "Deleting all servers",
+        "Removing application features"
+      ],
+      answer: 0,
+      explanation: "Scalability is the ability to handle changing demand."
+    },
+    {
+      q: "What is a virtual machine?",
+      options: [
+        "A software-based computer environment",
+        "A physical notebook",
+        "A database column",
+        "A CSS property"
+      ],
+      answer: 0,
+      explanation: "A virtual machine emulates a computer system in software."
+    },
+    {
+      q: "Why are backups important?",
+      options: [
+        "To help recover lost data",
+        "To change screen resolution",
+        "To increase keyboard size",
+        "To remove all security"
+      ],
+      answer: 0,
+      explanation: "Backups provide copies of data that can help with recovery."
+    }
+  ],
+
+  security: [
+    {
+      q: "What is cybersecurity?",
+      options: [
+        "Protecting systems and data",
+        "Designing page layouts",
+        "Writing only SQL queries",
+        "Managing screen brightness"
+      ],
+      answer: 0,
+      explanation: "Cybersecurity protects systems, networks and information."
+    },
+    {
+      q: "What makes a password stronger?",
+      options: [
+        "Using a long, unique password",
+        "Using your name only",
+        "Using 123456",
+        "Reusing the same password everywhere"
+      ],
+      answer: 0,
+      explanation: "Long, unique passwords are generally harder to guess."
+    },
+    {
+      q: "What is phishing?",
+      options: [
+        "A deceptive attempt to obtain sensitive information",
+        "A method of styling web pages",
+        "A database join",
+        "A type of monitor"
+      ],
+      answer: 0,
+      explanation: "Phishing tricks people into revealing information."
+    },
+    {
+      q: "Why are software updates important?",
+      options: [
+        "They can fix security weaknesses",
+        "They always remove passwords",
+        "They disable every application",
+        "They replace the keyboard"
+      ],
+      answer: 0,
+      explanation: "Updates often fix bugs and security vulnerabilities."
+    },
+    {
+      q: "What does encryption do?",
+      options: [
+        "Transforms data to protect its confidentiality",
+        "Deletes every file",
+        "Makes a screen brighter",
+        "Creates a database table"
+      ],
+      answer: 0,
+      explanation: "Encryption transforms readable data into a protected form."
+    },
+    {
+      q: "What is multi-factor authentication?",
+      options: [
+        "Using more than one type of verification",
+        "Using the same password twice",
+        "Turning off account protection",
+        "Sharing passwords with friends"
+      ],
+      answer: 0,
+      explanation: "Multi-factor authentication requires multiple forms of verification."
+    }
+  ],
+
+  mobile: [
+    {
+      q: "What is a mobile application?",
+      options: [
+        "Software designed for a mobile device",
+        "A database table only",
+        "A computer cable",
+        "A network password"
+      ],
+      answer: 0,
+      explanation: "A mobile application is software designed to run on mobile devices."
+    },
+    {
+      q: "What is the purpose of an app interface?",
+      options: [
+        "Let users interact with the app",
+        "Store electricity",
+        "Replace the operating system",
+        "Create a network cable"
+      ],
+      answer: 0,
+      explanation: "The interface lets users interact with app features."
+    },
+    {
+      q: "Why should an app be tested?",
+      options: [
+        "To find errors and check behaviour",
+        "To remove every feature",
+        "To stop user interaction",
+        "To delete its source code"
+      ],
+      answer: 0,
+      explanation: "Testing checks whether the app behaves as expected."
+    },
+    {
+      q: "What is an operating system?",
+      options: [
+        "Software that manages device resources",
+        "A type of image",
+        "A single database row",
+        "A web page heading"
+      ],
+      answer: 0,
+      explanation: "An operating system manages hardware and software resources."
+    },
+    {
+      q: "What does responsive design help with?",
+      options: [
+        "Adapting layouts to different screen sizes",
+        "Increasing database passwords",
+        "Deleting app users",
+        "Removing all buttons"
+      ],
+      answer: 0,
+      explanation: "Responsive design helps interfaces work across different screen sizes."
+    },
+    {
+      q: "Why do mobile apps request permissions?",
+      options: [
+        "To access specific device features or data",
+        "To make every file public",
+        "To avoid all testing",
+        "To change the device's owner"
+      ],
+      answer: 0,
+      explanation: "Permissions control access to features such as the camera."
+    }
+  ],
+
+  general: [
+    {
+      q: "What is an algorithm?",
+      options: [
+        "A step-by-step procedure to solve a problem",
+        "A computer screen",
+        "A database password",
+        "A type of printer"
+      ],
+      answer: 0,
+      explanation: "An algorithm is a sequence of steps used to solve a problem."
+    },
+    {
+      q: "What is a variable in programming?",
+      options: [
+        "A named place to store a value",
+        "A physical keyboard",
+        "A network cable",
+        "A web address only"
+      ],
+      answer: 0,
+      explanation: "A variable refers to a value used by a program."
+    },
+    {
+      q: "What is debugging?",
+      options: [
+        "Finding and fixing errors",
+        "Deleting the operating system",
+        "Changing a monitor",
+        "Printing a document only"
+      ],
+      answer: 0,
+      explanation: "Debugging identifies and fixes software errors."
+    },
+    {
+      q: "What is the purpose of a function?",
+      options: [
+        "Group reusable instructions",
+        "Store a physical device",
+        "Turn off a computer permanently",
+        "Create a network cable"
+      ],
+      answer: 0,
+      explanation: "Functions organise instructions into reusable units."
+    },
+    {
+      q: "What is input in a program?",
+      options: [
+        "Data provided to the program",
+        "Only the final result",
+        "A computer monitor",
+        "An error message only"
+      ],
+      answer: 0,
+      explanation: "Input is data supplied to a program for processing."
+    },
+    {
+      q: "What is output in a program?",
+      options: [
+        "The result produced by a program",
+        "Only the keyboard",
+        "A programming error",
+        "A source-code comment"
+      ],
+      answer: 0,
+      explanation: "Output is the information produced after processing."
+    }
+  ]
+
+};
+
+
+// ==========================================
+// 5. SELECT QUIZ BANK
+// ==========================================
+
+function getQuestionBank(name) {
+
+  const value = name.toLowerCase();
+
+  if (/python/.test(value)) {
+    return quizBanks.python;
+  }
+
+  if (/html|css|javascript|web development|frontend|front-end|website|react|angular|node/.test(value)) {
+    return quizBanks.web;
+  }
+
+  if (/sql|database|dbms|oracle|data engineering|mysql|mongodb|postgresql/.test(value)) {
+    return quizBanks.database;
+  }
+
+  if (/artificial intelligence|\bai\b|machine learning|\bml\b|deep learning|generative ai|prompt engineering|nlp|computer vision|data science|catboost|xgboost|neural network/.test(value)) {
+    return quizBanks.ai;
+  }
+
+  if (/cloud|devops|docker|kubernetes|aws|azure|linux|terraform|google cloud/.test(value)) {
+    return quizBanks.cloud;
+  }
+
+  if (/cybersecurity|cyber security|ethical hacking|network security|cryptography|security/.test(value)) {
+    return quizBanks.security;
+  }
+
+  if (/android|ios|mobile|app development|application development|software testing|selenium|flutter/.test(value)) {
+    return quizBanks.mobile;
+  }
+
+  return quizBanks.general;
+}
+
+const questionBank = getQuestionBank(courseName);
+
+
+// ==========================================
+// 6. GET QUESTIONS FOR EACH LESSON
+// ==========================================
+
+function getQuestionsForLesson(index) {
+
+  const count = Math.min(10, questionBank.length);
+
+  const start = (index * 2) % questionBank.length;
+
+  return Array.from(
+    { length: count },
+    (_, offset) =>
+      questionBank[(start + offset) % questionBank.length]
+  );
+
+}
+
+
+// ==========================================
+// 7. LOCAL STORAGE FUNCTIONS
+// ==========================================
+
+function readStorage(key, fallback) {
+
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    console.error("Could not read saved data:", error);
+    return fallback;
+  }
+
+}
+
+function writeStorage(key, value) {
+
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.error("Could not save data:", error);
+    return false;
+  }
+
+}
+
+function getProgress() {
+
+  const data = readStorage(PROGRESS_KEY, {});
+
+  return data && typeof data === "object" ? data : {};
+
+}
+
+function getCourseProgress() {
+
+  const allProgress = getProgress();
+
+  if (
+    !allProgress[courseName] ||
+    typeof allProgress[courseName] !== "object"
+  ) {
+    allProgress[courseName] = {
+      completed: [],
+      scores: {}
+    };
+  }
+
+  const courseProgress = allProgress[courseName];
+
+  if (!Array.isArray(courseProgress.completed)) {
+    courseProgress.completed = [];
+  }
+
+  if (
+    !courseProgress.scores ||
+    typeof courseProgress.scores !== "object"
+  ) {
+    courseProgress.scores = {};
+  }
+
+  return {
+    allProgress,
+    courseProgress
+  };
+
+}
+
+function saveCourseProgress(allProgress) {
+  return writeStorage(PROGRESS_KEY, allProgress);
+}
+
+function escapeHTML(value) {
+
+  return String(value).replace(/[&<>"']/g, function (character) {
+
+    const replacements = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    };
+
+    return replacements[character];
+
+  });
+
+}
+
+
+// ==========================================
+// 8. RENDER LESSON TABS
+// ==========================================
+
+function renderLessonTabs() {
+
+  const tabs = document.getElementById("lessonTabs");
+
+  const { courseProgress } = getCourseProgress();
+
+  tabs.innerHTML = "";
+
+  lessons.forEach(function (lesson, index) {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+
+    button.className =
+      "lesson-tab" +
+      (index === currentLesson ? " active" : "");
+
+    const completed =
+      courseProgress.completed.includes(index);
+
+    button.textContent =
+      (completed ? "✓ " : "") +
+      (index + 1) +
+      ". " +
+      lesson.title;
+
+    button.addEventListener("click", function () {
+
+      currentLesson = index;
+
+      renderPage();
+
+    });
+
+    tabs.appendChild(button);
+
+  });
+
+}
+
+
+// ==========================================
+// 9. RENDER PROGRESS
+// ==========================================
+
+function renderProgress() {
+
+  const { courseProgress } = getCourseProgress();
+
+  const completedCount =
+    courseProgress.completed.length;
+
+  const percentage = Math.round(
+    (completedCount / lessons.length) * 100
+  );
+
+  document.getElementById("progressFill").style.width =
+    percentage + "%";
+
+  document.getElementById("progressText").textContent =
+    completedCount +
+    " of " +
+    lessons.length +
+    " lessons completed (" +
+    percentage +
+    "%)";
+
+}
+// ==========================================
+// 10. LOAD YOUTUBE VIDEOS FOR EACH LESSON
+// ==========================================
+
+let lastVideoSearchKey = "";
+
+async function loadLessonVideos() {
+
+  const player = document.getElementById("videoPlayer");
+  const results = document.getElementById("videoResults");
+  const status = document.getElementById("videoStatus");
+
+  const lesson = lessons[currentLesson];
+
+  if (!player || !results || !status || !lesson) return;
+
+  const searchKey =
+    `${courseName}::${lesson.title}::${language}`;
+
+  if (searchKey === lastVideoSearchKey) return;
+
+  lastVideoSearchKey = searchKey;
+
+  player.innerHTML =
+    '<p class="muted">Select a video below to start learning.</p>';
+
+  results.innerHTML =
+    '<p class="muted">Searching for lesson videos...</p>';
+
+  status.textContent = "";
+
+  const params = new URLSearchParams({
+    course: courseName,
+    lesson: lesson.title,
+    language: language
+  });
+
+  try {
+
+    const response = await fetch(
+      `/api/youtube?${params.toString()}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Video search failed.");
+    }
+
+    if (
+      searchKey !==
+      `${courseName}::${lessons[currentLesson].title}::${language}`
+    ) {
+      return;
+    }
+
+    results.innerHTML = "";
+
+    if (!data.videos || data.videos.length === 0) {
+      results.textContent =
+        "No suitable videos found for this lesson.";
+      return;
+    }
+
+    data.videos.forEach((video, index) => {
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "video-result";
+
+      const title = document.createElement("strong");
+      title.textContent = video.title || `Video ${index + 1}`;
+
+      const channel = document.createElement("small");
+      channel.textContent = video.channel || "YouTube";
+
+      button.append(title, channel);
+
+      button.addEventListener("click", () => {
+
+        const iframe = document.createElement("iframe");
+
+        iframe.src =
+          `https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.videoId)}?autoplay=1&rel=0`;
+
+        iframe.title = video.title || "LearnPath lesson video";
+
+        iframe.allow =
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+
+        iframe.allowFullscreen = true;
+
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+
+        player.replaceChildren(iframe);
+
+        status.textContent =
+          "Playing your lesson inside LearnPath.";
+
+      });
+
+      results.appendChild(button);
+
+    });
+
+    status.textContent =
+      `Found ${data.videos.length} video suggestions. Select one to play.`;
+
+  } catch (error) {
+
+    lastVideoSearchKey = "";
+
+    results.textContent =
+      "Unable to load videos right now.";
+
+    status.textContent =
+      error.message || "Please try again later.";
+
+  }
+
+}
+
+
+// ==========================================
+// 11. RENDER CURRENT LESSON
+// ==========================================
+
+function renderLesson() {
+
+  const lesson = lessons[currentLesson];
+
+  const { courseProgress } = getCourseProgress();
+
+  document.getElementById("lessonTitle").textContent =
+    "Lesson " +
+    (currentLesson + 1) +
+    ": " +
+    lesson.title;
+
+  document.getElementById("lessonContent").innerHTML =
+    lesson.content;
+
+  const completed =
+    courseProgress.completed.includes(currentLesson);
+
+  document.getElementById("completeButton").textContent =
+    completed
+      ? "✓ Lesson Completed"
+      : "Mark Lesson as Completed";
+
+  document.getElementById("lessonStatus").textContent =
+    completed
+      ? "You have completed this lesson."
+      : "Complete this lesson when you finish studying.";
+
+  document.getElementById("previousButton").disabled =
+    currentLesson === 0;
+
+  document.getElementById("nextButton").disabled =
+    currentLesson === lessons.length - 1;
+
+  document.getElementById("navigationMessage").textContent =
+    "Lesson " +
+    (currentLesson + 1) +
+    " of " +
+    lessons.length;
+
+  renderProgress();
+  renderLessonTabs();
+  loadLessonVideos();
+
+}
+
+
+// ==========================================
+// 12. RENDER QUIZ
+// ==========================================
+
+function renderQuiz() {
+
+  currentQuestions =
+    getQuestionsForLesson(currentLesson);
+
+  quizSubmitted = false;
+
+  const form =
+    document.getElementById("quizForm");
+
+  const container =
+    document.getElementById("quizQuestions");
+
+  const result =
+    document.getElementById("quizResult");
+
+  const submitButton =
+    document.getElementById("submitQuizButton");
+
+  container.innerHTML = "";
+
+  result.hidden = true;
+  result.innerHTML = "";
+
+  submitButton.disabled = false;
+
+  currentQuestions.forEach(function (question, questionIndex) {
+
+    const questionBox =
+      document.createElement("div");
+
+    questionBox.className = "question";
+
+    const questionTitle =
+      document.createElement("p");
+
+    questionTitle.textContent =
+      (questionIndex + 1) +
+      ". " +
+      question.q;
+
+    questionBox.appendChild(questionTitle);
+
+    question.options.forEach(function (option, optionIndex) {
+
+      const label =
+        document.createElement("label");
+
+      label.className = "option";
+
+      const radio =
+        document.createElement("input");
+
+      radio.type = "radio";
+
+      radio.name =
+        "question" + questionIndex;
+
+      radio.value =
+        String(optionIndex);
+
+      radio.required = true;
+
+      const optionText =
+        document.createTextNode(option);
+
+      label.appendChild(radio);
+      label.appendChild(optionText);
+
+      questionBox.appendChild(label);
+
+    });
+
+    container.appendChild(questionBox);
+
+  });
+
+  const { courseProgress } = getCourseProgress();
+
+  const savedScore =
+    courseProgress.scores[currentLesson];
+
+  const scoreText =
+    document.getElementById("previousScore");
+
+  if (
+    savedScore !== undefined &&
+    savedScore !== null
+  ) {
+
+    if (typeof savedScore === "number") {
+
+      scoreText.textContent =
+        "Previous score: " +
+        savedScore +
+        "%";
+
+    } else {
+
+      scoreText.textContent =
+        "Previous score: " +
+        savedScore.score +
+        "/" +
+        savedScore.total +
+        " (" +
+        savedScore.percent +
+        "%)";
+
+    }
+
+  } else {
+
+    scoreText.textContent =
+      "No quiz score yet for this lesson.";
+
+  }
+
+  form.reset();
+
+}
+
+
+// ==========================================
+// 13. SUBMIT QUIZ AND SAVE SCORE
+// ==========================================
+
+document.getElementById("quizForm").addEventListener(
+  "submit",
+  function (event) {
+
+    event.preventDefault();
+
+    if (quizSubmitted) {
+      return;
+    }
+
+    const form =
+      document.getElementById("quizForm");
+
+    if (!form.reportValidity()) {
+      return;
+    }
+
+    let correct = 0;
+
+    const result =
+      document.getElementById("quizResult");
+
+    const submitButton =
+      document.getElementById("submitQuizButton");
+
+    result.innerHTML = "";
+
+    const heading =
+      document.createElement("h3");
+
+    heading.textContent = "Your Quiz Result";
+
+    result.appendChild(heading);
+
+    currentQuestions.forEach(function (question, index) {
+
+      const selected = form.querySelector(
+        'input[name="question' + index + '"]:checked'
+      );
+
+      const selectedAnswer =
+        selected ? Number(selected.value) : -1;
+
+      const isCorrect =
+        selectedAnswer === question.answer;
+
+      if (isCorrect) {
+        correct++;
+      }
+
+      const feedback =
+        document.createElement("p");
+
+      feedback.className =
+        isCorrect
+          ? "correct-answer"
+          : "wrong-answer";
+
+      feedback.textContent =
+        (index + 1) +
+        ". " +
+        (isCorrect ? "Correct!" : "Incorrect.") +
+        " Correct answer: " +
+        question.options[question.answer] +
+        ". " +
+        question.explanation;
+
+      result.appendChild(feedback);
+
+    });
+
+    const total =
+      currentQuestions.length;
+
+    const percent =
+      Math.round((correct / total) * 100);
+
+    const summary =
+      document.createElement("p");
+
+    summary.innerHTML =
+      "<strong>Score: " +
+      correct +
+      " / " +
+      total +
+      " (" +
+      percent +
+      "%)</strong>";
+
+    result.insertBefore(
+      summary,
+      result.children[1] || null
+    );
+
+    const message =
+      document.createElement("p");
+
+    if (percent >= 80) {
+
+      message.textContent =
+        "Excellent work! You understand these concepts well.";
+
+    } else if (percent >= 50) {
+
+      message.textContent =
+        "Good effort! Review the explanations to improve.";
+
+    } else {
+
+      message.textContent =
+        "Keep practising. Review this lesson and try again.";
+
+    }
+
+    result.appendChild(message);
+
+    const {
+      allProgress,
+      courseProgress
+    } = getCourseProgress();
+
+    courseProgress.scores[currentLesson] = {
+      score: correct,
+      total: total,
+      percent: percent
+    };
+
+    allProgress[courseName] =
+      courseProgress;
+
+    const saved =
+      saveCourseProgress(allProgress);
+
+    if (!saved) {
+
+      const warning =
+        document.createElement("p");
+
+      warning.textContent =
+        "Your result is visible, but the browser could not save it.";
+
+      result.appendChild(warning);
+
+    }
+
+    document.getElementById("previousScore").textContent =
+      "Latest score: " +
+      correct +
+      "/" +
+      total +
+      " (" +
+      percent +
+      "%)";
+
+    result.hidden = false;
+
+    submitButton.disabled = true;
+
+    quizSubmitted = true;
+
+  }
+);
+
+
+// ==========================================
+// 14. MARK LESSON COMPLETED
+// ==========================================
+
+document.getElementById("completeButton").addEventListener(
+  "click",
+  function () {
+
+    const {
+      allProgress,
+      courseProgress
+    } = getCourseProgress();
+
+    if (
+      !courseProgress.completed.includes(currentLesson)
+    ) {
+      courseProgress.completed.push(currentLesson);
+    }
+
+    allProgress[courseName] =
+      courseProgress;
+
+    const saved =
+      saveCourseProgress(allProgress);
+
+    renderLesson();
+
+    document.getElementById("lessonStatus").textContent =
+      saved
+        ? "Lesson completed and progress saved!"
+        : "Lesson marked complete, but progress could not be saved.";
+
+  }
+);
+
+
+// ==========================================
+// 15. PREVIOUS AND NEXT BUTTONS
+// ==========================================
+
+document.getElementById("previousButton").addEventListener(
+  "click",
+  function () {
+
+    if (currentLesson > 0) {
+
+      currentLesson--;
+
+      renderPage();
+
+    }
+
+  }
+);
+
+document.getElementById("nextButton").addEventListener(
+  "click",
+  function () {
+
+    if (currentLesson < lessons.length - 1) {
+
+      currentLesson++;
+
+      renderPage();
+
+    }
+
+  }
+);
+
+
+// ==========================================
+// 16. NOTES
+// ==========================================
+
+function getNotes() {
+
+  const notes =
+    readStorage(NOTES_KEY, {});
+
+  return notes && typeof notes === "object"
+    ? notes
+    : {};
+
+}
+
+function loadNotes() {
+
+  const notes = getNotes();
+
+  const key =
+    courseName + "::" + currentLesson;
+
+  document.getElementById("lessonNotes").value =
+    notes[key] || "";
+
+  document.getElementById("notesStatus").textContent =
+    "";
+
+}
+
+document.getElementById("saveNotesButton").addEventListener(
+  "click",
+  function () {
+
+    const notes = getNotes();
+
+    const key =
+      courseName + "::" + currentLesson;
+
+    notes[key] =
+      document.getElementById("lessonNotes").value;
+
+    const saved =
+      writeStorage(NOTES_KEY, notes);
+
+    document.getElementById("notesStatus").textContent =
+      saved
+        ? "Notes saved successfully!"
+        : "Could not save notes. Please check your browser storage.";
+
+  }
+);
+
+
+// ==========================================
+// 17. RENDER EVERYTHING
+// ==========================================
+
+function renderPage() {
+
+  document.title =
+    courseName + " - LearnPath";
+
+  document.getElementById("courseTitle").textContent =
+    courseName;
+
+  document.getElementById("languageText").textContent =
+    "Selected language: " + language;
+
+  renderLesson();
+
+  renderQuiz();
+
+  loadNotes();
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+}
+
+renderPage();
+
+</script>
+
+<!-- Firebase Authentication Protection -->
+<script type="module" src="auth-guard.js"></script>
+
+</body>
+</html>

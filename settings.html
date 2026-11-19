@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnPath - Settings</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      visibility: hidden;
+    }
+
+    .settings-container {
+      max-width: 650px;
+      margin: 55px auto;
+      padding: 25px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 25px #00000012;
+    }
+
+    .settings-container h1 {
+      color: #39247c;
+      margin-bottom: 10px;
+    }
+
+    .settings-description {
+      color: #666;
+      margin-bottom: 25px;
+    }
+
+    .settings-group {
+      margin-bottom: 22px;
+    }
+
+    .settings-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 9px;
+    }
+
+    .settings-group input,
+    .settings-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8d8e5;
+      border-radius: 8px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .settings-group input:disabled {
+      background: #f1f1f5;
+      color: #777;
+    }
+
+    .settings-save {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      background: #5638b5;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .settings-save:hover {
+      background: #40268f;
+    }
+
+    #settingsMessage {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      color: #5638b5;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .settings-container {
+        margin: 25px 15px;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <script type="module" src="auth-guard.js"></script>
+
+  <header class="navbar">
+    <a class="logo" href="index.html">LearnPath<span>.</span></a>
+    <a class="nav-link" href="index.html">Home</a>
+  </header>
+
+  <main>
+    <section class="settings-container">
+
+      <h1>Account Settings</h1>
+
+      <p class="settings-description">
+        Manage your LearnPath profile and learning preferences.
+      </p>
+
+      <form id="settingsForm">
+
+        <div class="settings-group">
+          <label for="displayName">Your Name</label>
+          <input
+            type="text"
+            id="displayName"
+            placeholder="Enter your name"
+            maxlength="60"
+            required
+          >
+        </div>
+
+        <div class="settings-group">
+          <label for="accountEmail">Registered Email</label>
+          <input
+            type="email"
+            id="accountEmail"
+            disabled
+          >
+        </div>
+
+        <div class="settings-group">
+          <label for="preferredLanguage">
+            Preferred Learning Language
+          </label>
+
+          <select id="preferredLanguage">
+            <option value="English">English</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </div>
+
+        <button type="submit" class="settings-save">
+          Save Settings
+        </button>
+
+        <p id="settingsMessage" aria-live="polite"></p>
+
+      </form>
+
+      <a href="index.html" class="back-link">
+        ← Back to LearnPath
+      </a>
+
+    </section>
+  </main>
+
+  <script type="module">
+    import { auth } from "./firebase-config.js";
+
+    import {
+      onAuthStateChanged,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    const nameInput = document.getElementById("displayName");
+    const emailInput = document.getElementById("accountEmail");
+    const languageInput = document.getElementById("preferredLanguage");
+    const form = document.getElementById("settingsForm");
+    const message = document.getElementById("settingsMessage");
+
+    let currentUser = null;
+
+    const savedLanguage =
+      localStorage.getItem("learnpath-language") || "English";
+
+    languageInput.value = savedLanguage;
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) return;
+
+      currentUser = user;
+
+      nameInput.value = user.displayName || "";
+      emailInput.value = user.email || "";
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!currentUser) {
+        message.textContent = "Please sign in again.";
+        message.style.color = "red";
+        return;
+      }
+
+      const newName = nameInput.value.trim();
+      const newLanguage = languageInput.value;
+
+      if (!newName) {
+        message.textContent = "Please enter your name.";
+        message.style.color = "red";
+        return;
+      }
+
+      try {
+        await updateProfile(currentUser, {
+          displayName: newName
+        });
+
+        localStorage.setItem(
+          "learnpath-language",
+          newLanguage
+        );
+
+        message.textContent = "Settings saved successfully!";
+        message.style.color = "green";
+
+      } catch (error) {
+        console.error(error);
+
+        message.textContent =
+          "Unable to save settings. Please try again.";
+
+        message.style.color = "red";
+      }
+    });
+  </script>
+
+</body>
+</html>
