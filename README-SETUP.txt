@@ -8,3 +8,4 @@ LEARNPATH FIREBASE AUTH SETUP
 5. Test on your Vercel HTTPS URL or local development server, not by double-clicking HTML files.
 6. Commit and push changes to the GitHub branch connected to Vercel.
 Existing progress and notes remain in browser localStorage; they are not synced to Firebase accounts. This client-side guard is a navigation gate, not server-side authorization. Never put private keys in these files.
+Vercel deployment sync test.
