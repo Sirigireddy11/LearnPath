@@ -98,7 +98,40 @@ if (!grid || !searchInput || !languageSelect || !message || !searchButton) {
 // LOAD SAVED LANGUAGE PREFERENCE
 // ================================
 
-const supportedLanguages = ["English", "Telugu", "Tamil", "Hindi"];
+
+const supportedLanguages = [
+  "English",
+  "Telugu",
+  "Hindi",
+  "Tamil",
+  "Kannada",
+  "Malayalam",
+  "Bengali",
+  "Marathi",
+  "Gujarati",
+  "Punjabi",
+  "Urdu",
+  "Arabic",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  "French",
+  "German",
+  "Spanish",
+  "Portuguese",
+  "Italian",
+  "Russian",
+  "Indonesian",
+  "Malay",
+  "Thai",
+  "Vietnamese",
+  "Turkish",
+  "Persian",
+  "Nepali",
+  "Sinhala",
+  "Swahili"
+];
+
 
 const savedLanguage = localStorage.getItem("learnpath-language");
 
